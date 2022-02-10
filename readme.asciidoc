@@ -1,0 +1,148 @@
+# State Veg Maps 2021
+:toc:
+:toclevels: 5
+
+Create a single aggregated layer/table of NSW State Veg / PCT Maps from the datasets available in 2021.
+
+## Introduction
+
+The NSW State Veg Maps (SVMs) refer to Plant Community Types (PCTs) and are a foundation for Biodiversity Credits and the Offset Trading Groups within that. Biodiversity is increasing in importance and so has the requirement to be working seamlessly across all of the maps.
+
+The individual SVMs sometimes overlap and appear to have been built with slightly different methodologies. Therefore the order in which they are clipped and aggregated affects the output. There are also variations in the naming of attributes.
+
+There is advice that the authors of the data will provide an update on the east and create a seamless layer in March 2022. It appears that Central and West NSW are not being updated by the new eastern update. Therefore expecting the bulk of this workflow will endure (to do is the incorporation of the eastern update approx Mar 2022).
+
+This dataset is can be a mouthful for Postgres and Postgis if there are any errors, so a very verbose method of processing is followed. Possibly this is due to geometry anomalies in the Central Tablelands input table, amongst others.
+
+Special note, there is a hole with no coverage at Euchareena, which can be a loose end when troubleshooting the arrangement of layers...
+
+Stellar support has been provided by the CrunchyData team as part of the normal use of their CrunchyBridge service. https://www.crunchybridge.com
+
+image::images/state_veg_maps_2021-20839.png[]
+Image courtesy of NSW DPIE
+
+Home of this doc https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/state_veg_maps_2021.asciidoc
+
+
+## Data source
+
+Landing page https://www.environment.nsw.gov.au/topics/animals-and-plants/biodiversity/nsw-bionet/about-bionet-vegetation-classification/vegetation-maps/state-vegetation-type-map
+
+
+[cols=3*,options=header]
+|===
+|Region | File | Layer
+|Western NSW | Vegetation_Western_SVTM_v1_0_4492/data/quickview.gdb | WesternSVM_v1_0_PCT_E_4492
+|Sydney Metro |vegetationsydmetroareav314489/data/GDB/data.gdb | SydneyMetroArea_v3_1_2016_E_4489
+|Upper Hunter |vegetationhunteruppersvtm4894/hunterupper_svtm_4894/data/quickview.gdb| HunterUpperSVM_v1_0_PCT_E_4894
+|Central Tablelands | Vegetation_CentralTablelands_SVTM_4778/data/VegMap.gdb | CentTableSVM_v1p0_PCT_E_4778
+|Border Rivers Gwydir Namoi |Vegetation_BorderRiversGwydirNamoi_4467/data/GDB/QuickViewMap.gdb | BRG_NamoiSVM_v1p3_PCT_E_4467
+|Riverina |vegetationsvtmriverinav1.2quickviews4469/SVTM_Riverina_v1p2.gdb |Riverina_v1p2_Quickview
+|Central West & Lachlan |vegetationcentwestlachlansvm4468/Vegetation_CentWestLachlanSVM_4468/data/VegData.gdb | CentWestLachSVM_v1p4_PCT_E_4468
+|===
+
+### Overlaps
+
+The layers are not necessarily clipped against one another. They are can be adjacent but may or may not overlap. The table below indicates overlap and therefore appropriate processing.
+
+Y = Overlap
+
+[cols=9*,options=header]
+|===
+||Order of processing |Western NSW |Sydney Metro |Upper Hunter |Central Tablelands |Border Rivers Gwydir Namoi |Riverina |Central West & Lachlan
+
+|Western NSW |3|X|.|.|.|.|.|.
+|Sydney Metro |2|N|X|.|.|.|.|.
+|Upper Hunter |6|N|N|X|.|.|.|.
+|Central Tablelands |1|N|N|Y|X|.|.|.
+|Border Rivers Gwydir Namoi |4|N|N|Y|N|X|.|.
+|Riverina |7|N|N|N|Y|N|X|.
+|Central West & Lachlan |5|Y|N|N|Y|N|Y|X
+|===
+
+Overlapping layers must have a mask created and are then clipped against that mask.
+
+## Infrastructure and Configuration
+
+- Resources: 32 GB / 4 cores — 250 GB
+- Provider: CrunchyBridge on aws
+- Region: ap-southeast-2
+
+```sql
+SELECT current_database(), version(), PostGIS_version(),
+ PostGIS_GEOS_version()
+;
+
+"terroir"	"PostgreSQL 14.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4), 64-bit"	"3.1 USE_GEOS=1 USE_PROJ=1 USE_STATS=1"	"3.9.1dev-CAPI-1.14.1"
+
+alter system set work_mem = '64MB'
+;
+```
+
+## Output
+
+- Size on disk is 20 GB with 12.8 million records
+- Geometry: Polygon (MultiPolygon)
+- Extent: -84969,5926055 : 1021976,6838874
+- EPSG: 7855
+
+
+## Loading
+
+Import to the db
+
+_https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/configure_01_v.state_veg_map_2021.txt[GDAL commands via QGIS - GitHub Link]_
+```
+include::configure_01_v.state_veg_map_2021.sh[]
+```
+
+## Cleanup the geometry
+
+_https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/configure_02_v.state_veg_map_2021.sql[Make the geometry valid - GitHub Link]_
+```sql
+include::configure_02_v.state_veg_map_2021.sql[]
+```
+
+
+## Make one table / layer of State Veg Maps
+
+
+
+image::images/explain_plan_1644353258192.svg[]
+
+_https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/configure_03_v.state_veg_map_2021.sql[Make one table - GitHub Link]_
+```sql
+include::configure_03_v.state_veg_map_2021.sql[]
+```
+
+
+## Delete the redundant tables
+
+_clean up_
+```sql
+include::cleanup_51_v.state_veg_map_2021.sql[]
+```
+
+## Do some QA
+
+Do a calculation of area grouped by the formation then again by the mapsource, as a test
+
+_query to calculate area as qa on the job_
+```sql
+include::qa_41_v.state_veg_map_2021.sql[]
+```
+
+_qa results by formation_
+[%header,format=csv,cols="<3,>1"]
+|===
+include::qa_results/state_veg_maps_2021_qa_area_by_formation.csv[]
+|===
+
+_qa results by mapsource_
+[%header,format=csv,cols="<3,>1"]
+|===
+include::qa_results/state_veg_maps_2021_qa_area_by_mapsource.csv[]
+|===
+
+END
+-----
