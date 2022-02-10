@@ -18,10 +18,11 @@ Special note, there is a hole with no coverage at Euchareena, which can be a loo
 
 Stellar support has been provided by the CrunchyData team as part of the normal use of their CrunchyBridge service. https://www.crunchybridge.com
 
-image::images/state_veg_maps_2021-20839.png[]
+image::state_veg_maps_2021-20839.png[]
 Image courtesy of NSW DPIE
 
-Home of this doc https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/state_veg_maps_2021.asciidoc
+Home of this doc 
+https://github.com/billjwilliamson/state_veg_maps/edit/main/readme.asciidoc
 
 
 ## Data source
@@ -108,7 +109,7 @@ include::configure_02_v.state_veg_map_2021.sql[]
 
 
 
-image::images/explain_plan_1644353258192.svg[]
+image::explain_plan_1644353258192.svg[]
 
 _https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/configure_03_v.state_veg_map_2021.sql[Make one table - GitHub Link]_
 ```sql
@@ -135,13 +136,13 @@ include::qa_41_v.state_veg_map_2021.sql[]
 _qa results by formation_
 [%header,format=csv,cols="<3,>1"]
 |===
-include::qa_results/state_veg_maps_2021_qa_area_by_formation.csv[]
+include::state_veg_maps_2021_qa_area_by_formation.csv[]
 |===
 
 _qa results by mapsource_
 [%header,format=csv,cols="<3,>1"]
 |===
-include::qa_results/state_veg_maps_2021_qa_area_by_mapsource.csv[]
+include::state_veg_maps_2021_qa_area_by_mapsource.csv[]
 |===
 
 END
