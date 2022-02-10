@@ -12,7 +12,7 @@ The individual SVMs sometimes overlap and appear to have been built with slightl
 
 There is advice that the authors of the data will provide an update on the east and create a seamless layer in March 2022. It appears that Central and West NSW are not being updated by the new eastern update. Therefore expecting the bulk of this workflow will endure (to do is the incorporation of the eastern update approx Mar 2022).
 
-This dataset is can be a mouthful for Postgres and Postgis if there are any errors, so a very verbose method of processing is followed. Possibly this is due to geometry anomalies in the Central Tablelands input table, amongst others.
+This dataset can be a mouthful for Postgres and Postgis if there are any errors, so a very verbose method of processing is followed. Possibly this is due to geometry anomalies in the Central Tablelands input table, amongst others.
 
 Special note, there is a hole with no coverage at Euchareena, which can be a loose end when troubleshooting the arrangement of layers...
 
