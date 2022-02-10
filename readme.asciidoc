@@ -92,16 +92,16 @@ alter system set work_mem = '64MB'
 
 Import to the db
 
-_https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/configure_01_v.state_veg_map_2021.txt[GDAL commands via QGIS - GitHub Link]_
+_GDAL commands via QGIS_
 ```
-include::configure_01_v.state_veg_map_2021.sh[]
+configure_01_v.state_veg_map_2021.sh
 ```
 
 ## Cleanup the geometry
 
-_https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/configure_02_v.state_veg_map_2021.sql[Make the geometry valid - GitHub Link]_
-```sql
-include::configure_02_v.state_veg_map_2021.sql[]
+_Make the geometry valid - GitHub Link_
+```
+configure_02_v.state_veg_map_2021.sql
 ```
 
 
@@ -111,17 +111,17 @@ include::configure_02_v.state_veg_map_2021.sql[]
 
 image::explain_plan_1644353258192.svg[]
 
-_https://github.com/billjwilliamson/cd_terra/blob/master/viridarii/state_veg_maps_2021/configure_03_v.state_veg_map_2021.sql[Make one table - GitHub Link]_
-```sql
-include::configure_03_v.state_veg_map_2021.sql[]
+_Make one table - GitHub Link_
+```
+configure_03_v.state_veg_map_2021.sql
 ```
 
 
 ## Delete the redundant tables
 
 _clean up_
-```sql
-include::cleanup_51_v.state_veg_map_2021.sql[]
+```
+cleanup_51_v.state_veg_map_2021.sql
 ```
 
 ## Do some QA
@@ -130,20 +130,19 @@ Do a calculation of area grouped by the formation then again by the mapsource, a
 
 _query to calculate area as qa on the job_
 ```sql
-include::qa_41_v.state_veg_map_2021.sql[]
+qa_41_v.state_veg_map_2021.sql
 ```
 
 _qa results by formation_
-[%header,format=csv,cols="<3,>1"]
-|===
-include::state_veg_maps_2021_qa_area_by_formation.csv[]
-|===
+
+```
+state_veg_maps_2021_qa_area_by_formation.csv
+```
 
 _qa results by mapsource_
-[%header,format=csv,cols="<3,>1"]
-|===
-include::state_veg_maps_2021_qa_area_by_mapsource.csv[]
-|===
+```
+state_veg_maps_2021_qa_area_by_mapsource.csv
+```
 
 END
 -----
