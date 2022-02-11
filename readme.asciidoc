@@ -22,14 +22,15 @@ image::state_veg_maps_2021-20839.png[]
 Image courtesy of NSW DPIE
 
 Home of this doc 
-https://github.com/billjwilliamson/state_veg_maps/edit/main/readme.asciidoc
+https://github.com/billjwilliamson/state_veg_maps
 
 
 ## Data source
 
+Please refer to NSW Department of Planning Industry and Environment for updates of the source data. 
 Landing page https://www.environment.nsw.gov.au/topics/animals-and-plants/biodiversity/nsw-bionet/about-bionet-vegetation-classification/vegetation-maps/state-vegetation-type-map
 
-
+Layers used in this workflow;
 [cols=3*,options=header]
 |===
 |Region | File | Layer
@@ -82,7 +83,7 @@ alter system set work_mem = '64MB'
 
 ## Output
 
-- Size on disk is 20 GB with 12.8 million records
+- Size on disk is 16 GB with 12.8 million records
 - Geometry: Polygon (MultiPolygon)
 - Extent: -84969,5926055 : 1021976,6838874
 - EPSG: 7855
@@ -93,56 +94,39 @@ alter system set work_mem = '64MB'
 Import to the db
 
 _GDAL commands via QGIS_
-```
-configure_01_v.state_veg_map_2021.sh
-```
+https://github.com/billjwilliamson/state_veg_maps/blob/main/configure_01_v.state_veg_map_2021.sh[configure_01_v.state_veg_map_2021.sh]
 
 ## Cleanup the geometry
 
 _Make the geometry valid - GitHub Link_
-```
-configure_02_v.state_veg_map_2021.sql
-```
-
+https://github.com/billjwilliamson/state_veg_maps/blob/main/configure_02_v.state_veg_map_2021.sql[configure_02_v.state_veg_map_2021.sql]
 
 ## Make one table / layer of State Veg Maps
-
 
 
 image::explain_plan_1644353258192.svg[]
 
 _Make one table - GitHub Link_
-```
-configure_03_v.state_veg_map_2021.sql
-```
+https://github.com/billjwilliamson/state_veg_maps/blob/main/configure_03_v.state_veg_map_2021.sql[configure_03_v.state_veg_map_2021.sql]
 
 
 ## Delete the redundant tables
 
 _clean up_
-```
-cleanup_51_v.state_veg_map_2021.sql
-```
+https://github.com/billjwilliamson/state_veg_maps/blob/main/cleanup_51_v.state_veg_map_2021.sql[cleanup_51_v.state_veg_map_2021.sql]
 
 ## Do some QA
 
-Do a calculation of area grouped by the formation then again by the mapsource, as a test
+Do a calculation of area grouped by the formation then again by the mapsource, as a test.
 
 _query to calculate area as qa on the job_
-```sql
-qa_41_v.state_veg_map_2021.sql
-```
+https://github.com/billjwilliamson/state_veg_maps/blob/main/qa_41_v.state_veg_map_2021.sql[qa_41_v.state_veg_map_2021.sql]
 
 _qa results by formation_
-
-```
-state_veg_maps_2021_qa_area_by_formation.csv
-```
+https://github.com/billjwilliamson/state_veg_maps/blob/main/state_veg_maps_2021_qa_area_by_formation.csv[state_veg_maps_2021_qa_area_by_formation.csv]
 
 _qa results by mapsource_
-```
-state_veg_maps_2021_qa_area_by_mapsource.csv
-```
+https://github.com/billjwilliamson/state_veg_maps/blob/main/state_veg_maps_2021_qa_area_by_mapsource.csv[state_veg_maps_2021_qa_area_by_mapsource.csv]
 
 END
 -----
